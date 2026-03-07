@@ -1,3 +1,2 @@
 gradio
-openai
-python-dotenv
+gpt4all
