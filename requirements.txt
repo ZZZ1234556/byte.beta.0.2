@@ -1,2 +1,4 @@
+openai
 gradio
-gpt4all
+transformers
+torch
