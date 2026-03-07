@@ -19,7 +19,7 @@ if not model_path.exists():
     # model_path = "ruta_al_modelo.bin"
 
 # Cargar el modelo
-model = GPT4All("ggml-gpt4all-j-v1.3-groovy")
+model = GPT4All("Phi-3-mini-4k-instruct.Q4_0.gguf")
 
 # -------------------------------
 # 2️⃣ Función del chat
