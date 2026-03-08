@@ -1,28 +1,72 @@
-from fastapi import FastAPI
+import time
 from openai import OpenAI
-import os
+from dotenv import load_dotenv
+from agent import Agent
 
-app = FastAPI()
+load_dotenv()
 
-client = OpenAI(
-    api_key=os.getenv("GROQ_API_KEY"),
-    base_url="https://api.groq.com/openai/v1"
-)
+print("😊 Bienvenido a byte.beta (version de prueba), sera un placer ayudarte 😉")
 
-@app.get("/")
-def home():
-    return {"mensaje": "IA Groq funcionando 🚀"}
+client = OpenAI()
+agent = Agent()
 
-@app.get("/chat")
-def chat(msg: str):
+# ----------------------------
+# Efecto escribir letra por letra
+# ----------------------------
+def type_writer(text, delay=0.03):
+    for char in text:
+        print(char, end="", flush=True)
+        time.sleep(delay)
+    print()
 
-    completion = client.chat.completions.create(
-        model="llama3-8b-8192",
-        messages=[
-            {"role": "user", "content": msg}
-        ]
-    )
+# ----------------------------
+# Obtener respuesta IA
+# ----------------------------
+def get_response(agent, client):
+    try:
+        response = client.chat.completions.create(
+            model="gpt-5-nano",
+            messages=agent.messages
+        )
 
-    respuesta = completion.choices[0].message.content
+        if response and response.choices:
+            reply = response.choices[0].message.content
 
-    return {"respuesta": respuesta}
+            # Guardar en memoria
+            agent.messages.append({
+                "role": "assistant",
+                "content": reply
+            })
+
+            return reply
+
+        return ""
+
+    except Exception as e:
+        return f"Error IA: {e}"
+
+# ----------------------------
+# Loop principal
+# ----------------------------
+while True:
+    user_input = input("Tú: ").strip()
+
+    if not user_input:
+        continue
+
+    if user_input.lower() in ("salir", "exit", "bye"):
+        print("👋 Hasta luego!")
+        break
+
+    # Guardar mensaje usuario
+    agent.messages.append({
+        "role": "user",
+        "content": user_input
+    })
+
+    # Obtener respuesta
+    reply = get_response(agent, client)
+
+    # Mostrar letra por letra
+    if reply:
+        type_writer("IA: " + reply, delay=0.02)
