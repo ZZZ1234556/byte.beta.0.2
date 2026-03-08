@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from openai import OpenAI
 
 app = FastAPI()
-
 client = OpenAI()
 
 @app.get("/")
@@ -15,5 +14,4 @@ def chat(msg: str):
         model="gpt-4.1-mini",
         input=msg
     )
-
     return {"respuesta": response.output_text}
