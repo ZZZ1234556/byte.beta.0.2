@@ -23,5 +23,6 @@ def chat(msg: str):
         ]
     )
 
-    return {
-        "respuesta": completion.choices[0].message.content
+    respuesta = completion.choices[0].message.content
+
+    return {"respuesta": respuesta}
