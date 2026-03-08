@@ -4,15 +4,16 @@ import os
 
 app = FastAPI()
 
-API_URL = "https://router.huggingface.co/hf-inference/models/google/flan-t5-large"
+API_URL = "https://router.huggingface.co/hf-inference/models/facebook/blenderbot-400M-distill"
 
 headers = {
-    "Authorization": f"Bearer {os.getenv('HF_TOKEN')}"
+    "Authorization": f"Bearer {os.getenv("HF_TOKEN")}",
+    "Content-Type": "application/json"
 }
 
 @app.get("/")
 def home():
-    return {"mensaje": "Servidor funcionando 🚀"}
+    return {"mensaje": "IA funcionando 🚀"}
 
 @app.get("/chat")
 def chat(msg: str):
@@ -21,7 +22,4 @@ def chat(msg: str):
 
     response = requests.post(API_URL, headers=headers, json=payload)
 
-    return {
-        "status_code": response.status_code,
-        "texto": response.text
-    }
+    return {"respuesta": response.json()}
