@@ -1,17 +1,23 @@
 from fastapi import FastAPI
-from openai import OpenAI
+import requests
+import os
 
 app = FastAPI()
-client = OpenAI()
+
+API_URL = "https://api-inference.huggingface.co/models/google/flan-t5-large"
+
+headers = {
+    "Authorization": f"Bearer {os.getenv('HF_TOKEN')}"
+}
 
 @app.get("/")
 def home():
-    return {"mensaje": "🚀 Mi agente de IA está vivo"}
+    return {"mensaje": "Mi IA funciona gratis 🚀"}
 
 @app.get("/chat")
 def chat(msg: str):
-    response = client.responses.create(
-        model="gpt-4.1-mini",
-        input=msg
-    )
-    return {"respuesta": response.output_text}
+    payload = {"inputs": msg}
+
+    response = requests.post(API_URL, headers=headers, json=payload)
+
+    return {"respuesta": response.json()}
