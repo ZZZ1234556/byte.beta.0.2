@@ -1,31 +1,27 @@
 from fastapi import FastAPI
-import requests
+from openai import OpenAI
 import os
 
 app = FastAPI()
 
-API_URL = "https://router.huggingface.co/hf-inference/models/facebook/blenderbot-400M-distill"
-
-headers = {
-    "Authorization": f"Bearer {os.getenv('HF_TOKEN')}",
-    "Content-Type": "application/json"
-}
+client = OpenAI(
+    api_key=os.getenv("GROQ_API_KEY"),
+    base_url="https://api.groq.com/openai/v1"
+)
 
 @app.get("/")
 def home():
-    return {"mensaje": "IA funcionando 🚀"}
+    return {"mensaje": "IA Groq funcionando 🚀"}
 
 @app.get("/chat")
 def chat(msg: str):
 
-    try:
-        payload = {"inputs": msg}
+    completion = client.chat.completions.create(
+        model="llama3-8b-8192",
+        messages=[
+            {"role": "user", "content": msg}
+        ]
+    )
 
-        response = requests.post(API_URL, headers=headers, json=payload, timeout=30)
-
-        return {
-            "respuesta": response.text
-        }
-
-    except Exception as e:
-        return {"error": str(e)}
+    return {
+        "respuesta": completion.choices[0].message.content
