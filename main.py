@@ -6,10 +6,8 @@ app = FastAPI()
 
 API_URL = "https://router.huggingface.co/hf-inference/models/google/flan-t5-large"
 
-HF_TOKEN = os.getenv("HF_TOKEN")
-
 headers = {
-    "Authorization": f"Bearer {HF_TOKEN}"
+    "Authorization": f"Bearer {os.getenv('HF_TOKEN')}"
 }
 
 @app.get("/")
@@ -18,15 +16,12 @@ def home():
 
 @app.get("/chat")
 def chat(msg: str):
-    try:
-        payload = {"inputs": msg}
 
-        response = requests.post(API_URL, headers=headers, json=payload)
+    payload = {"inputs": msg}
 
-        return {
-            "status_code": response.status_code,
-            "respuesta": response.json()
-        }
+    response = requests.post(API_URL, headers=headers, json=payload)
 
-    except Exception as e:
-        return {"error": str(e)}
+    return {
+        "status_code": response.status_code,
+        "texto": response.text
+    }
